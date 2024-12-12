@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,22 +10,29 @@ namespace лаб6
     {
         // Числитель дроби
         public int Numerator { get; private set; }
+
         // Знаменатель дроби
         public int Denominator { get; private set; }
 
         // Конструктор для создания дроби с числителем и знаменателем
         public Fraction(int numerator, int denominator)
         {
+            if (denominator == 0)
+            {
+                throw new ArgumentException("Знаменатель не может быть равен нулю.");
+            }
             if (denominator < 0)
             {
                 numerator = -numerator;
                 denominator = -denominator;
             }
-            Numerator = numerator;
-            Denominator = denominator;
+            // Упрощаем дробь при создании
+            int gcd = GCD(Math.Abs(numerator), Math.Abs(denominator));
+            Numerator = numerator / gcd;
+            Denominator = denominator / gcd;
         }
 
-        // Переопределение метода ToString для текстового представления дроби
+        // Метод для строкового представления дроби
         public override string ToString()
         {
             return $"{Numerator}/{Denominator}";
@@ -58,6 +65,10 @@ namespace лаб6
         // Перегрузка оператора / для деления дробей
         public static Fraction operator /(Fraction f1, Fraction f2)
         {
+            if (f2.Numerator == 0)
+            {
+                throw new DivideByZeroException("Нельзя делить на дробь с числителем, равным нулю.");
+            }
             int newNumerator = f1.Numerator * f2.Denominator;
             int newDenominator = f1.Denominator * f2.Numerator;
             return new Fraction(newNumerator, newDenominator);
@@ -84,6 +95,10 @@ namespace лаб6
         // Перегрузка оператора / для деления дроби на целое число
         public static Fraction operator /(Fraction f, int n)
         {
+            if (n == 0)
+            {
+                throw new DivideByZeroException("Нельзя делить на ноль.");
+            }
             return f / new Fraction(n, 1);
         }
 
@@ -120,12 +135,18 @@ namespace лаб6
         public void SetNumerator(int numerator)
         {
             Numerator = numerator;
+            Simplify();
         }
 
         // Метод для установки знаменателя дроби
         public void SetDenominator(int denominator)
         {
+            if (denominator == 0)
+            {
+                throw new ArgumentException("Знаменатель не может быть равен нулю.");
+            }
             Denominator = denominator;
+            Simplify();
         }
 
         // Метод для сравнения двух дробей
@@ -142,6 +163,26 @@ namespace лаб6
             int otherNumerator = other.Numerator * this.Denominator;
 
             return thisNumerator.CompareTo(otherNumerator);
+        }
+
+        // Метод для упрощения дроби
+        private void Simplify()
+        {
+            int gcd = GCD(Math.Abs(Numerator), Math.Abs(Denominator));
+            Numerator /= gcd;
+            Denominator /= gcd;
+        }
+
+        // Метод для нахождения НОД (наибольшего общего делителя)
+        private static int GCD(int a, int b)
+        {
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
         }
     }
 }
