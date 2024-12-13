@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ namespace лаб6
         public void Meow()
         {
             Console.WriteLine($"{Name}: мяу!");
-            meowCount++;
+            IncrementMeowCount();
         }
 
         // Метод для мяуканья кота N раз
@@ -39,13 +39,19 @@ namespace лаб6
             if (n <= 0)
                 Console.WriteLine("Количество раз для мяуканья должно быть больше нуля.");
             Console.WriteLine($"{Name}: " + string.Join("-", new string[n].Select(_ => "мяу")));
-            meowCount += n;
+            IncrementMeowCount(n);
         }
 
         // Метод для получения количества мяуканий
         public int GetMeowCount()
         {
             return meowCount;
+        }
+
+        // Приватный метод для увеличения счетчика мяуканий
+        private void IncrementMeowCount(int count = 1)
+        {
+            meowCount += count;
         }
     }
 }
